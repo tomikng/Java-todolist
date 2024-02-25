@@ -4,6 +4,7 @@ module cz.nguyeha.todolist {
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
+    requires java.sql;
 
     opens cz.nguyeha.todolist.controller to javafx.fxml;
 

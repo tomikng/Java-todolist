@@ -1,5 +1,6 @@
 package cz.nguyeha.todolist.controller;
 
+import cz.nguyeha.todolist.database.DatabaseHelper;
 import cz.nguyeha.todolist.model.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,6 +70,11 @@ public class TaskController {
                 };
             }
         });
+        refreshTaskList();
+    }
+
+    private void refreshTaskList() {
+        taskListView.getItems().setAll(DatabaseHelper.getAllTasks());
     }
 
     @FXML
@@ -78,7 +84,8 @@ public class TaskController {
         String description = descriptionTextField.getText();
 
         Task newTask = new Task(title, dueDate, description);
-        taskListView.getItems().add(newTask);
+        DatabaseHelper.createTask(newTask); // Save to database
+        refreshTaskList(); // Reload the task list view
 
         titleTextField.clear();
         datePicker.setValue(null);
