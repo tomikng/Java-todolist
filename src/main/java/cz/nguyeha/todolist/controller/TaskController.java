@@ -15,6 +15,8 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class TaskController {
 
@@ -91,17 +93,44 @@ public class TaskController {
 
     @FXML
     protected void addTask() {
-        String title = titleTextField.getText();
+        String title = titleTextField.getText().trim();
         LocalDate dueDate = datePicker.getValue();
-        String description = descriptionTextField.getText();
+        String description = descriptionTextField.getText().trim();
+
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (title.isEmpty()) {
+            errorMessage.append("Task title cannot be empty.\n");
+        }
+
+        if (dueDate == null) {
+            errorMessage.append("Please select a due date for the task.\n");
+        }
+
+        if (errorMessage.length() > 0) {
+            showAlertWithHeaderText("Validation Error", errorMessage.toString());
+            return;
+        }
 
         Task newTask = new Task(title, dueDate, description);
         DatabaseHelper.createTask(newTask);
         refreshTaskList();
+        clearInputFields();
+    }
 
+    private void showAlertWithHeaderText(String headerText, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText(headerText);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void clearInputFields() {
         titleTextField.clear();
         datePicker.setValue(null);
         descriptionTextField.clear();
+        titleTextField.getStyleClass().remove("error");
+        datePicker.getStyleClass().remove("error");
     }
 
     private void showDetails(Task task) {
