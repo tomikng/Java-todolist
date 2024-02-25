@@ -84,8 +84,8 @@ public class TaskController {
         String description = descriptionTextField.getText();
 
         Task newTask = new Task(title, dueDate, description);
-        DatabaseHelper.createTask(newTask); // Save to database
-        refreshTaskList(); // Reload the task list view
+        DatabaseHelper.createTask(newTask);
+        refreshTaskList();
 
         titleTextField.clear();
         datePicker.setValue(null);
@@ -110,12 +110,13 @@ public class TaskController {
     }
 
     private void deleteTask(Task task) {
-        taskListView.getItems().remove(task);
+        DatabaseHelper.deleteTask(task.getId());
+        refreshTaskList();
     }
 
     private void markAsComplete(Task task) {
         task.setCompleted(true);
-        // Optionally, refresh or update the ListView to visually indicate the task's completed state
-        taskListView.refresh();
+        DatabaseHelper.updateTask(task);
+        refreshTaskList();
     }
 }

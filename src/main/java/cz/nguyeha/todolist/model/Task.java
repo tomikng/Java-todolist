@@ -17,6 +17,12 @@ public class Task {
         this.completed = false;
     }
 
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id) {
+        this(title, dueDate, description);
+        this.completed = completed;
+        this.id = id;
+    }
+
     public int getId() { return id; }
 
     public String getTitle() { return title; }

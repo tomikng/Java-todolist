@@ -1,7 +1,6 @@
 package cz.nguyeha.todolist.database;
 
 import cz.nguyeha.todolist.model.Task;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +13,18 @@ public class DatabaseHelper {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
+
     public static void initializeDatabase() {
+        String sql = "CREATE TABLE IF NOT EXISTS TASKS(" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "title VARCHAR(255)," +
+                "dueDate DATE," +
+                "description VARCHAR(255)," +
+                "completed BOOLEAN" +
+                ")";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute("CREATE TABLE IF NOT EXISTS TASKS(" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "title VARCHAR(255)," +
-                    "dueDate DATE," +
-                    "description VARCHAR(255)," +
-                    "completed BOOLEAN" +
-                    ")");
+            stmt.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,8 +54,9 @@ public class DatabaseHelper {
                 Task task = new Task(
                         rs.getString("title"),
                         rs.getDate("dueDate").toLocalDate(),
-                        rs.getString("description"));
-                task.setCompleted(rs.getBoolean("completed"));
+                        rs.getString("description"),
+                        rs.getBoolean("completed"),
+                        rs.getInt("id")); // Ensure your Task constructor handles this
                 taskList.add(task);
             }
         } catch (SQLException e) {
@@ -71,24 +73,27 @@ public class DatabaseHelper {
             pstmt.setDate(2, java.sql.Date.valueOf(task.getDueDate()));
             pstmt.setString(3, task.getDescription());
             pstmt.setBoolean(4, task.isCompleted());
-            // Assuming you add an 'id' field to your Task class
             pstmt.setInt(5, task.getId());
-            pstmt.executeUpdate();
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Task updated successfully");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void deleteTask(Task task) {
+    public static void deleteTask(int taskId) {
         String SQL_DELETE = "DELETE FROM tasks WHERE id=?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL_DELETE)) {
-            // Assuming you add an 'id' field to your Task class
-            pstmt.setInt(1, task.getId());
-            pstmt.executeUpdate();
+            pstmt.setInt(1, taskId);
+            int rowsDeleted = pstmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Task deleted successfully");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 }
