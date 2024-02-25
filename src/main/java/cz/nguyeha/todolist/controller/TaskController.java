@@ -1,7 +1,8 @@
 package cz.nguyeha.todolist.controller;
 
-import cz.nguyeha.todolist.database.DatabaseHelper;
+import cz.nguyeha.todolist.managers.TaskManager;
 import cz.nguyeha.todolist.model.Task;
+import cz.nguyeha.todolist.services.ValidationService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,12 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class TaskController {
 
@@ -32,63 +30,16 @@ public class TaskController {
     @FXML
     private TextField descriptionTextField;
 
+    private TaskManager taskManager;
+
     public void initialize() {
-        taskListView.setCellFactory(new Callback<>() {
-            @Override
-            public ListCell<Task> call(ListView<Task> listView) {
-                return new ListCell<>() {
-                    private final HBox hbox = new HBox(10);
-                    private final Label nameLabel = new Label();
-                    private final Button deleteButton = new Button("Delete");
-                    private final Button completeButton = new Button();
-                    private final Region spacer = new Region();
-
-                    {
-                        hbox.getChildren().addAll(nameLabel, spacer, deleteButton, completeButton);
-                        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-                        deleteButton.setOnAction(event -> deleteTask(getItem()));
-                        completeButton.setOnAction(event -> {
-                            if (getItem() != null) {
-                                toggleTaskCompletion(getItem());
-                            }
-                        });
-                        nameLabel.setOnMouseClicked(event -> showDetails(getItem()));
-                    }
-
-                    @Override
-                    protected void updateItem(Task item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                            setGraphic(null);
-                        } else {
-                            nameLabel.setText(item.getTitle());
-                            completeButton.setText(item.isCompleted() ? "Not Done" : "Complete");
-                            setGraphic(hbox);
-                            setOnMouseClicked(event -> {
-                                if (event.getClickCount() == 2 && getItem() != null) {
-                                    showDetails(getItem());
-                                }
-                            });
-                        }
-                    }
-                };
-            }
-        });
+        this.taskManager = new TaskManager();
+        taskListView.setCellFactory(param -> new TaskListCell());
         refreshTaskList();
     }
 
-    private void toggleTaskCompletion(Task task) {
-        if (task != null) {
-            task.setCompleted(!task.isCompleted());
-            DatabaseHelper.updateTask(task);
-            refreshTaskList();
-        }
-    }
-
     private void refreshTaskList() {
-        taskListView.getItems().setAll(DatabaseHelper.getAllTasks());
+        taskListView.getItems().setAll(taskManager.getAllTasks());
     }
 
     @FXML
@@ -97,30 +48,20 @@ public class TaskController {
         LocalDate dueDate = datePicker.getValue();
         String description = descriptionTextField.getText().trim();
 
-        StringBuilder errorMessage = new StringBuilder();
-
-        if (title.isEmpty()) {
-            errorMessage.append("Task title cannot be empty.\n");
-        }
-
-        if (dueDate == null) {
-            errorMessage.append("Please select a due date for the task.\n");
-        }
-
-        if (errorMessage.length() > 0) {
-            showAlertWithHeaderText("Validation Error", errorMessage.toString());
+        if (!ValidationService.isValidTaskInput(title, dueDate)) {
+            showAlertWithHeaderText(ValidationService.generateErrorMessage(title, dueDate));
             return;
         }
 
         Task newTask = new Task(title, dueDate, description);
-        DatabaseHelper.createTask(newTask);
+        taskManager.createTask(newTask);
         refreshTaskList();
         clearInputFields();
     }
 
-    private void showAlertWithHeaderText(String headerText, String content) {
+    private void showAlertWithHeaderText(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(headerText);
+        alert.setHeaderText("Validation Error");
         alert.setContentText(content);
         alert.showAndWait();
     }
@@ -129,8 +70,6 @@ public class TaskController {
         titleTextField.clear();
         datePicker.setValue(null);
         descriptionTextField.clear();
-        titleTextField.getStyleClass().remove("error");
-        datePicker.getStyleClass().remove("error");
     }
 
     private void showDetails(Task task) {
@@ -151,9 +90,53 @@ public class TaskController {
         }
     }
 
+    private class TaskListCell extends ListCell<Task> {
+        private final HBox hbox = new HBox(10);
+        private final Label nameLabel = new Label();
+        private final Button completeButton = new Button();
 
-    private void deleteTask(Task task) {
-        DatabaseHelper.deleteTask(task.getId());
-        refreshTaskList();
+        TaskListCell() {
+            Button deleteButton = new Button("Delete");
+            Region spacer = new Region();
+            hbox.getChildren().addAll(nameLabel, spacer, deleteButton, completeButton);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            deleteButton.setOnAction(event -> {
+                Task task = getItem();
+                if (task != null) {
+                    taskManager.deleteTask(task.getId());
+                    refreshTaskList();
+                }
+            });
+
+            completeButton.setOnAction(event -> {
+                Task task = getItem();
+                if (task != null) {
+                    task.setCompleted(!task.isCompleted());
+                    taskManager.updateTask(task);
+                    refreshTaskList();
+                }
+            });
+
+            this.setOnMouseClicked(event -> {
+                System.out.println("Double clicked on " + getItem());
+                if (event.getClickCount() == 2 && getItem() != null) {
+                    showDetails(getItem());
+                }
+            });
+        }
+
+        @Override
+        protected void updateItem(Task item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                nameLabel.setText(item.getTitle());
+                completeButton.setText(item.isCompleted() ? "Not Done" : "Complete");
+                setGraphic(hbox);
+            }
+        }
     }
 }
