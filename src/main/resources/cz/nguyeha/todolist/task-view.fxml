@@ -24,7 +24,7 @@
             <TextField fx:id="descriptionTextField" prefWidth="100" promptText="Description"/>
             <HBox spacing="15" alignment="CENTER_RIGHT">
                 <ComboBox fx:id="priorityComboBox" prefWidth="150" promptText="Priority"/>
-                <Button fx:id="addTask" text="Add Task" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" prefWidth="100"/>
+                <Button fx:id="addTask" text="Add Task" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" prefWidth="100" onAction="#addTask"/>
             </HBox>
         </VBox>
     </VBox>

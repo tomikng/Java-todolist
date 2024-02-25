@@ -133,15 +133,19 @@ public class TaskController {
     }
 
     private class TaskListCell extends ListCell<Task> {
-        private final HBox hbox = new HBox(10);
-        private final Label nameLabel = new Label();
-        private final Button completeButton = new Button();
+        private final HBox hbox = new HBox(10); // Horizontal box to hold the cell elements
+        private final Label nameLabel = new Label(); // Label for the task's name
+        private final Label dateLabel = new Label(); // Label for displaying the due date
+        private final Label priorityLabel = new Label(); // Label for displaying the priority
+        private final Button completeButton = new Button(); // Button to mark task as complete/not complete
+        private final Button deleteButton = new Button("Delete"); // Button to delete a task
+        private final Region spacer = new Region(); // Spacer to push buttons to the right
 
         TaskListCell() {
-            Button deleteButton = new Button("Delete");
-            Region spacer = new Region();
-            hbox.getChildren().addAll(nameLabel, spacer, deleteButton, completeButton);
-            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+            // Initialize the cell layout components
+            hbox.setSpacing(10); // Ensure there's a uniform spacing between elements
+            hbox.getChildren().addAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, deleteButton);
+            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS); // Ensure spacer takes up all extra space
 
             deleteButton.setOnAction(event -> {
                 Task task = getItem();
@@ -151,6 +155,7 @@ public class TaskController {
                 }
             });
 
+            // Modify the completeButton action to update its text based on task completion status
             completeButton.setOnAction(event -> {
                 Task task = getItem();
                 if (task != null) {
@@ -161,7 +166,6 @@ public class TaskController {
             });
 
             this.setOnMouseClicked(event -> {
-                System.out.println("Double clicked on " + getItem());
                 if (event.getClickCount() == 2 && getItem() != null) {
                     showDetails(getItem());
                 }
@@ -175,10 +179,30 @@ public class TaskController {
                 setText(null);
                 setGraphic(null);
             } else {
-                nameLabel.setText(item.getTitle() + " [" + item.getPriority().toString() + "]");
-                completeButton.setText(item.isCompleted() ? "Not Done" : "Complete");
+                nameLabel.setText(item.getTitle());
+                dateLabel.setText(item.getDueDate().toString());
+                priorityLabel.setText(item.getPriority().toString()); // You might want to adjust the display of priority
+                completeButton.setText(item.isCompleted() ? "Completed" : "Mark Complete");
+
+                // Style priority as a tag
+                String priorityStyle = getPriorityStyle(item.getPriority());
+                priorityLabel.setStyle(priorityStyle);
+
+                hbox.getChildren().setAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, deleteButton);
                 setGraphic(hbox);
             }
         }
+
+        private String getPriorityStyle(Priority priority) {
+            return switch (priority) {
+                case HIGH -> "-fx-background-color: red; -fx-text-fill: white; -fx-padding: 3px;";
+                case MEDIUM -> "-fx-background-color: orange; -fx-text-fill: white; -fx-padding: 3px;";
+                case LOW -> "-fx-background-color: green; -fx-text-fill: white; -fx-padding: 3px;";
+            };
+        }
+
+
     }
+
+
 }
