@@ -94,7 +94,7 @@ public class TaskController {
 
     private void showAlertWithHeaderText(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("Validation Error");
+        alert.setHeaderText("Incorrect input");
         alert.setContentText(content);
         alert.showAndWait();
     }
@@ -181,7 +181,7 @@ public class TaskController {
             } else {
                 nameLabel.setText(item.getTitle());
                 dateLabel.setText(item.getDueDate().toString());
-                priorityLabel.setText(item.getPriority().toString()); // You might want to adjust the display of priority
+                priorityLabel.setText(item.getPriority().toString());
                 completeButton.setText(item.isCompleted() ? "Completed" : "Mark Complete");
 
                 // Style priority as a tag
