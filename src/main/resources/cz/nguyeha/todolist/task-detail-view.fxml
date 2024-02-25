@@ -4,6 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <VBox spacing="10" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.nguyeha.todolist.controller.TaskDetailController">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20" />
@@ -12,6 +14,16 @@
     <DatePicker fx:id="datePicker" />
     <TextField fx:id="descriptionTextField" promptText="Description" />
     <CheckBox fx:id="completedCheckBox" text="Done" />
+    <ComboBox fx:id="priorityComboBox" promptText="Priority">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="LOW"/>
+                <String fx:value="MEDIUM"/>
+                <String fx:value="HIGH"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+
 
     <!-- Add a button for saving changes -->
     <Button text="Save Changes" onAction="#saveTask" />
