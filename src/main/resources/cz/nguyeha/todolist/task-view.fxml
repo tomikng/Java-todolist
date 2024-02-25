@@ -6,10 +6,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.control.ComboBox?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.nguyeha.todolist.controller.TaskController">
     <ListView fx:id="taskListView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="572.0" />
     <TextField fx:id="titleTextField" layoutX="14.0" layoutY="224.0" prefWidth="200.0" promptText="Title" />
     <DatePicker fx:id="datePicker" layoutX="224.0" layoutY="224.0" prefWidth="200.0" promptText="Due Date" />
     <TextField fx:id="descriptionTextField" layoutX="14.0" layoutY="254.0" prefWidth="410.0" promptText="Description" />
+    <ComboBox fx:id="priorityComboBox" layoutX="434.0" layoutY="254.0" prefWidth="150.0" />
     <Button layoutX="434.0" layoutY="224.0" mnemonicParsing="false" onAction="#addTask" text="Add Task" />
 </AnchorPane>

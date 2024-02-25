@@ -20,7 +20,8 @@ public class DatabaseHelper {
                 "title VARCHAR(255)," +
                 "dueDate DATE," +
                 "description VARCHAR(255)," +
-                "completed BOOLEAN" +
+                "completed BOOLEAN," +
+                "priority VARCHAR(50)" + // Add priority column
                 ")";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
@@ -31,13 +32,14 @@ public class DatabaseHelper {
     }
 
     public static void createTask(Task task) {
-        String SQL_INSERT = "INSERT INTO tasks (title, dueDate, description, completed) VALUES (?, ?, ?, ?)";
+        String SQL_INSERT = "INSERT INTO tasks (title, dueDate, description, completed, priority) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL_INSERT)) {
             pstmt.setString(1, task.getTitle());
             pstmt.setDate(2, java.sql.Date.valueOf(task.getDueDate()));
             pstmt.setString(3, task.getDescription());
             pstmt.setBoolean(4, task.isCompleted());
+            pstmt.setString(5, task.getPriority().toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,7 +58,9 @@ public class DatabaseHelper {
                         rs.getDate("dueDate").toLocalDate(),
                         rs.getString("description"),
                         rs.getBoolean("completed"),
-                        rs.getInt("id")); // Ensure your Task constructor handles this
+                        rs.getInt("id"),
+                        rs.getString("priority") // Retrieve priority
+                );// Ensure your Task constructor handles this
                 taskList.add(task);
             }
         } catch (SQLException e) {
@@ -66,14 +70,15 @@ public class DatabaseHelper {
     }
 
     public static void updateTask(Task task) {
-        String SQL_UPDATE = "UPDATE tasks SET title=?, dueDate=?, description=?, completed=? WHERE id=?";
+        String SQL_UPDATE = "UPDATE tasks SET title=?, dueDate=?, description=?, completed=?, priority=? WHERE id=?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL_UPDATE)) {
             pstmt.setString(1, task.getTitle());
             pstmt.setDate(2, java.sql.Date.valueOf(task.getDueDate()));
             pstmt.setString(3, task.getDescription());
             pstmt.setBoolean(4, task.isCompleted());
-            pstmt.setInt(5, task.getId());
+            pstmt.setString(5, task.getPriority().toString()); // This might need to be adjusted based on your parameter indexing
+            pstmt.setInt(6, task.getId());
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("Task updated successfully");

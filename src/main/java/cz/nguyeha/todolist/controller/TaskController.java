@@ -1,15 +1,16 @@
 package cz.nguyeha.todolist.controller;
 
+import cz.nguyeha.todolist.enums.Priority;
 import cz.nguyeha.todolist.managers.TaskManager;
 import cz.nguyeha.todolist.model.Task;
 import cz.nguyeha.todolist.services.ValidationService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
@@ -30,12 +31,18 @@ public class TaskController {
     @FXML
     private TextField descriptionTextField;
 
+    @FXML
+    private ComboBox<Priority> priorityComboBox;
+
     private TaskManager taskManager;
 
     public void initialize() {
         this.taskManager = new TaskManager();
         taskListView.setCellFactory(param -> new TaskListCell());
         refreshTaskList();
+
+        priorityComboBox.setItems(FXCollections.observableArrayList(Priority.values()));
+        priorityComboBox.setValue(Priority.valueOf("LOW")); // Default value
     }
 
     private void refreshTaskList() {
@@ -47,13 +54,14 @@ public class TaskController {
         String title = titleTextField.getText().trim();
         LocalDate dueDate = datePicker.getValue();
         String description = descriptionTextField.getText().trim();
+        Priority priority = priorityComboBox.getValue();
 
         if (!ValidationService.isValidTaskInput(title, dueDate)) {
             showAlertWithHeaderText(ValidationService.generateErrorMessage(title, dueDate));
             return;
         }
 
-        Task newTask = new Task(title, dueDate, description);
+        Task newTask = new Task(title, dueDate, description, priority);
         taskManager.createTask(newTask);
         refreshTaskList();
         clearInputFields();
@@ -70,7 +78,9 @@ public class TaskController {
         titleTextField.clear();
         datePicker.setValue(null);
         descriptionTextField.clear();
+        priorityComboBox.setValue(Priority.LOW); // Reset to default
     }
+
 
     private void showDetails(Task task) {
         try {
@@ -99,7 +109,7 @@ public class TaskController {
             Button deleteButton = new Button("Delete");
             Region spacer = new Region();
             hbox.getChildren().addAll(nameLabel, spacer, deleteButton, completeButton);
-            HBox.setHgrow(spacer, Priority.ALWAYS);
+            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
 
             deleteButton.setOnAction(event -> {
                 Task task = getItem();
@@ -133,7 +143,7 @@ public class TaskController {
                 setText(null);
                 setGraphic(null);
             } else {
-                nameLabel.setText(item.getTitle());
+                nameLabel.setText(item.getTitle() + " [" + item.getPriority().toString() + "]");
                 completeButton.setText(item.isCompleted() ? "Not Done" : "Complete");
                 setGraphic(hbox);
             }
