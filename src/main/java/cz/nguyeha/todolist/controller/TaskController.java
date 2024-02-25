@@ -38,7 +38,7 @@ public class TaskController {
                     private final HBox hbox = new HBox(10);
                     private final Label nameLabel = new Label();
                     private final Button deleteButton = new Button("Delete");
-                    private final Button completeButton = new Button("Complete");
+                    private final Button completeButton = new Button();
                     private final Region spacer = new Region();
 
                     {
@@ -46,7 +46,11 @@ public class TaskController {
                         HBox.setHgrow(spacer, Priority.ALWAYS);
 
                         deleteButton.setOnAction(event -> deleteTask(getItem()));
-                        completeButton.setOnAction(event -> markAsComplete(getItem()));
+                        completeButton.setOnAction(event -> {
+                            if (getItem() != null) {
+                                toggleTaskCompletion(getItem());
+                            }
+                        });
                         nameLabel.setOnMouseClicked(event -> showDetails(getItem()));
                     }
 
@@ -58,8 +62,8 @@ public class TaskController {
                             setGraphic(null);
                         } else {
                             nameLabel.setText(item.getTitle());
+                            completeButton.setText(item.isCompleted() ? "Not Done" : "Complete");
                             setGraphic(hbox);
-                            // Optionally, handle click events on the whole cell (not just the nameLabel) if needed
                             setOnMouseClicked(event -> {
                                 if (event.getClickCount() == 2 && getItem() != null) {
                                     showDetails(getItem());
@@ -71,6 +75,14 @@ public class TaskController {
             }
         });
         refreshTaskList();
+    }
+
+    private void toggleTaskCompletion(Task task) {
+        if (task != null) {
+            task.setCompleted(!task.isCompleted());
+            DatabaseHelper.updateTask(task);
+            refreshTaskList();
+        }
     }
 
     private void refreshTaskList() {
@@ -94,7 +106,7 @@ public class TaskController {
 
     private void showDetails(Task task) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cz/nguyeha/todolist/task-detail.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cz/nguyeha/todolist/task-detail-view.fxml"));
             Parent root = loader.load();
 
             TaskDetailController controller = loader.getController();
@@ -103,20 +115,16 @@ public class TaskController {
             Stage stage = new Stage();
             stage.setTitle("Task Details");
             stage.setScene(new Scene(root));
-            stage.show();
+            stage.setOnHidden(e -> refreshTaskList());
+            stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     private void deleteTask(Task task) {
         DatabaseHelper.deleteTask(task.getId());
-        refreshTaskList();
-    }
-
-    private void markAsComplete(Task task) {
-        task.setCompleted(true);
-        DatabaseHelper.updateTask(task);
         refreshTaskList();
     }
 }
