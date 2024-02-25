@@ -34,19 +34,44 @@ public class TaskController {
     @FXML
     private ComboBox<Priority> priorityComboBox;
 
+    @FXML
+    private ComboBox<String> filterComboBox;
+    @FXML
+    private ComboBox<String> sortComboBox;
+
+    @FXML
+    private ToggleButton ascendingSwitch;
+
+    private Boolean isAscending = false;
+
     private TaskManager taskManager;
 
     public void initialize() {
         this.taskManager = new TaskManager();
         taskListView.setCellFactory(param -> new TaskListCell());
-        refreshTaskList();
 
         priorityComboBox.setItems(FXCollections.observableArrayList(Priority.values()));
         priorityComboBox.setValue(Priority.valueOf("LOW")); // Default value
+
+        // Setup filter and sort ComboBoxes
+        filterComboBox.setItems(FXCollections.observableArrayList("All", "Completed", "Not Completed"));
+        filterComboBox.setValue("All"); // Default value
+        filterComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
+
+        sortComboBox.setItems(FXCollections.observableArrayList("Priority", "Date"));
+        sortComboBox.setValue("Priority"); // Default value
+        sortComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
+
+        refreshTaskList();
     }
 
+
     private void refreshTaskList() {
-        taskListView.getItems().setAll(taskManager.getAllTasks());
+        String filterValue = filterComboBox.getValue();
+        String sortValue = sortComboBox.getValue();
+        // You might need to implement getFilteredAndSortedTasks in your TaskManager class
+        // This is a placeholder for whatever mechanism you implement
+        taskListView.getItems().setAll(taskManager.getFilteredAndSortedTasks(filterValue, sortValue, isAscending));
     }
 
     @FXML
@@ -98,6 +123,13 @@ public class TaskController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void ascendingSwitch() {
+        isAscending = !isAscending;
+        ascendingSwitch.setText(isAscending ? "Ascending" : "Descending"); // Update button text based on current state
+        refreshTaskList();
     }
 
     private class TaskListCell extends ListCell<Task> {
