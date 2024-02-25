@@ -46,34 +46,52 @@ public class TaskController {
 
     private TaskManager taskManager;
 
+    /**
+     * The initialize function is called when the FXML file is loaded.
+     * It sets up the taskListView, priorityComboBox, filterComboBox and sortComboBox.
+     * <p>
+     */
     public void initialize() {
         this.taskManager = new TaskManager();
         taskListView.setCellFactory(param -> new TaskListCell());
 
         priorityComboBox.setItems(FXCollections.observableArrayList(Priority.values()));
-        priorityComboBox.setValue(Priority.valueOf("LOW")); // Default value
+        priorityComboBox.setValue(Priority.valueOf("LOW"));
 
         // Setup filter and sort ComboBoxes
         filterComboBox.setItems(FXCollections.observableArrayList("All", "Completed", "Not Completed"));
-        filterComboBox.setValue("All"); // Default value
+        filterComboBox.setValue("All");
         filterComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
 
         sortComboBox.setItems(FXCollections.observableArrayList("Priority", "Date"));
-        sortComboBox.setValue("Priority"); // Default value
+        sortComboBox.setValue("Priority");
         sortComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
 
         refreshTaskList();
     }
 
 
+    /**
+     * The refreshTaskList function is used to update the taskListView with the current list of tasks.
+     * It also updates the list based on the filter and sort ComboBoxes.
+     */
     private void refreshTaskList() {
         String filterValue = filterComboBox.getValue();
         String sortValue = sortComboBox.getValue();
-        // You might need to implement getFilteredAndSortedTasks in your TaskManager class
-        // This is a placeholder for whatever mechanism you implement
         taskListView.getItems().setAll(taskManager.getFilteredAndSortedTasks(filterValue, sortValue, isAscending));
     }
 
+    /**
+     * The addTask function is called when the user clicks on the &quot;Add Task&quot; button.
+     * <p>
+     * It takes in all the input from each of the text fields and combo box, and
+     * validates that they are not empty or invalid.
+     * <ul>
+     *     <li>If any of them are, it will display an alert to notify the user that they need to fill out all fields before adding a task.</li>
+     *     <li>If everything is filled out correctly, then it will create a new task object with those values as parameters for its constructor function.</li>
+     *     <li>Then it calls refreshTaskList() which updates our list view with our newly added task (which was added by calling createTask())</li>
+     * </ul>
+     */
     @FXML
     protected void addTask() {
         String title = titleTextField.getText().trim();
@@ -92,6 +110,12 @@ public class TaskController {
         clearInputFields();
     }
 
+    /**
+     * Used to display an error message when the user enters invalid input.
+     * <p>
+     *
+     * @param content Display the error message
+     */
     private void showAlertWithHeaderText(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Incorrect input");
@@ -99,6 +123,10 @@ public class TaskController {
         alert.showAndWait();
     }
 
+    /**
+     * Clears all the input fields in the GUI.
+     * <p>
+     */
     private void clearInputFields() {
         titleTextField.clear();
         datePicker.setValue(null);
@@ -107,6 +135,12 @@ public class TaskController {
     }
 
 
+    /**
+     * Used to display the details of a task in a new window.
+     * <p>
+     *
+     * @param task which will be displayed in the new window
+     */
     private void showDetails(Task task) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/cz/nguyeha/todolist/task-detail-view.fxml"));
@@ -125,6 +159,14 @@ public class TaskController {
         }
     }
 
+    /**
+     * Is called when the user clicks on the ascendingSwitch button.
+     * <p>
+     * It toggles whether tasks are sorted in ascending order, and updates the text of
+     * the button to reflect this change.
+     * <p>
+     * Finally, it calls refreshTaskList() so that any changes made by this function will be reflected in the task list view.
+     */
     @FXML
     private void ascendingSwitch() {
         isAscending = !isAscending;
@@ -133,20 +175,27 @@ public class TaskController {
     }
 
     private class TaskListCell extends ListCell<Task> {
-        private final HBox hbox = new HBox(10); // Horizontal box to hold the cell elements
-        private final Label nameLabel = new Label(); // Label for the task's name
-        private final Label dateLabel = new Label(); // Label for displaying the due date
-        private final Label priorityLabel = new Label(); // Label for displaying the priority
-        private final Button completeButton = new Button(); // Button to mark task as complete/not complete
-        private final Button deleteButton = new Button("Delete"); // Button to delete a task
-        private final Region spacer = new Region(); // Spacer to push buttons to the right
+        private final HBox hbox = new HBox(10);
+        private final Label nameLabel = new Label();
+        private final Label dateLabel = new Label();
+        private final Label priorityLabel = new Label();
+        private final Button completeButton = new Button();
+        private final Button deleteButton = new Button("Delete");
+        private final Region spacer = new Region();
 
+        /**
+         * The TaskListCell is a subclass of ListCell that allows for the creation of a cell in the task list.
+         * <p></p>
+         * The function contains two buttons, one to delete and one to complete tasks. It also has three labels,
+         * which display the <strong>name</strong>, <strong>name</strong> and <strong>priority</strong> of each task. The TaskListCell class also contains an onMouseClicked event handler
+         * that displays details about a selected task when it is double-clicked by the user.
+         * <p>
+         */
         TaskListCell() {
-            // Initialize the cell layout components
-            hbox.setSpacing(10); // Ensure there's a uniform spacing between elements
+            hbox.setSpacing(10);
             hbox.getChildren().addAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, deleteButton);
-            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS); // Ensure spacer takes up all extra space
-
+            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+//          Delete Button
             deleteButton.setOnAction(event -> {
                 Task task = getItem();
                 if (task != null) {
@@ -154,8 +203,7 @@ public class TaskController {
                     refreshTaskList();
                 }
             });
-
-            // Modify the completeButton action to update its text based on task completion status
+//          Complete Button
             completeButton.setOnAction(event -> {
                 Task task = getItem();
                 if (task != null) {
@@ -164,7 +212,7 @@ public class TaskController {
                     refreshTaskList();
                 }
             });
-
+//          Double Click Event
             this.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && getItem() != null) {
                     showDetails(getItem());
@@ -172,6 +220,15 @@ public class TaskController {
             });
         }
 
+        /**
+         * The updateItem function is called whenever the item in a cell changes.
+         * If the item is null, then it means that there are no more items to show, and so we set all of our labels to null.
+         * Otherwise, we update each label with information from the Task object and add them to an HBox which will be displayed as our cell's graphic.
+         *
+         * @param item Get the title, due date and priority of the task
+         * @param empty Determine if the cell is empty or not
+         *
+         */
         @Override
         protected void updateItem(Task item, boolean empty) {
             super.updateItem(item, empty);
@@ -193,6 +250,14 @@ public class TaskController {
             }
         }
 
+        /**
+         * Helper function to determine style of priority tag
+         *
+         * @param priority Determine which style to return
+         *
+         * @return String
+         *
+         */
         private String getPriorityStyle(Priority priority) {
             return switch (priority) {
                 case HIGH -> "-fx-background-color: red; -fx-text-fill: white; -fx-padding: 3px;";

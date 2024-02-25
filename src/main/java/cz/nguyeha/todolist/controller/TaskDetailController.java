@@ -27,6 +27,15 @@ public class TaskDetailController {
 
     private Task task;
 
+    /**
+     * The setTask function is used to set the values of the fields in this controller
+     * to match those of a given task. This function is called when a user clicks on
+     * an existing task in the main window, and it allows them to edit that task's details.
+     *
+     * @param task Set the task to be edited
+     *
+     *
+     */
     public void setTask(Task task) {
         this.task = task;
         titleTextField.setText(task.getTitle());
@@ -36,6 +45,9 @@ public class TaskDetailController {
         priorityComboBox.setValue(task.getPriority().toString());
     }
 
+    /**
+     * Saves the task to the database.
+     */
     @FXML
     protected void saveTask() {
         task.setTitle(titleTextField.getText());
@@ -49,6 +61,9 @@ public class TaskDetailController {
         closeStage();
     }
 
+    /**
+     * Closes the stage that is currently open.
+     */
     private void closeStage() {
         Stage stage = (Stage) titleTextField.getScene().getWindow();
         stage.close();
