@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Task {
+    private int id;
     private String title;
     private LocalDate dueDate;
     private String description;
@@ -15,6 +16,8 @@ public class Task {
         this.description = description;
         this.completed = false;
     }
+
+    public int getId() { return id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
