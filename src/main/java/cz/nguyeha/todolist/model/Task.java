@@ -1,5 +1,7 @@
 package cz.nguyeha.todolist.model;
 
+import cz.nguyeha.todolist.enums.Priority;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -10,13 +12,54 @@ public class Task {
     private String description;
     private boolean completed;
 
-    public Task(String title, LocalDate dueDate, String description) {
+    private Priority priority;
+
+    /**
+     * The Task function is a constructor that creates a new Task object.
+     *
+     * @param title Set the title of a task
+     * @param dueDate Set the duedate field
+     * @param description Set the description of the task
+     * @param priority Set the priority of a task
+     */
+    public Task(String title, LocalDate dueDate, String description, Priority priority) {
         this.title = title;
         this.dueDate = dueDate;
         this.description = description;
         this.completed = false;
+        this.priority = priority;
     }
 
+    /**
+     * The Task function is a constructor that creates a new Task object with an <strong>id</strong> and <strong>completed</strong> parameter.
+     *
+     * @param title Set the title of the task
+     * @param dueDate Set the duedate variable
+     * @param description Set the description of a task
+     * @param completed Set the completed property of the task object
+     * @param id Set the id of the task
+     * @param priority Set the priority of a task
+     */
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, Priority priority) {
+        this(title, dueDate, description, priority);
+        this.completed = completed;
+        this.id = id;
+    }
+
+    /**
+     * The Task function is a constructor that creates a new Task object and <strong>priority as string</strong>.
+     * @param title Set the title of a task
+     * @param dueDate Set the duedate field
+     * @param description Set the description of the task
+     * @param completed Determine whether the task is completed or not
+     * @param id Set the id of the task
+     * @param priority Set the priority of a task
+     */
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, String priority) {
+        this(title, dueDate, description, completed, id, Priority.valueOf(priority));
+    }
+
+    // Getters and setters
     public int getId() { return id; }
 
     public String getTitle() { return title; }
@@ -31,6 +74,17 @@ public class Task {
     public boolean isCompleted() { return completed; }
     public void setCompleted(boolean completed) { this.completed = completed; }
 
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    /**
+     * The toString function is used to print out the title, due date, and completion status of a task.
+     */
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
