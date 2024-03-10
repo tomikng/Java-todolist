@@ -86,13 +86,8 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>cz.nguyeha.todolist/cz.nguyeha.todolist.HelloApplication</mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
-                            <noManPages>true</noManPages>
-                            <stripDebug>true</stripDebug>
-                            <noHeaderFiles>true</noHeaderFiles>
+                            <mainClass>cz.nguyeha.todolist/cz.nguyeha.todolist.Main</mainClass>
+                            <moduleName>cz.nguyeha.todolist</moduleName>
                         </configuration>
                     </execution>
                 </executions>
