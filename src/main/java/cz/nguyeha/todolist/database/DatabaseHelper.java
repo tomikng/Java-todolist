@@ -31,7 +31,8 @@ public class DatabaseHelper {
                 "description VARCHAR(255)," +
                 "completed BOOLEAN," +
                 "priority VARCHAR(50)," +
-                "archived VARCHAR(50)" +
+                "archived VARCHAR(50)," +
+                "completedAt DATE" +
                 ")";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
@@ -46,7 +47,7 @@ public class DatabaseHelper {
      * @param task Task to be inserted into the database
      */
     public static void createTask(Task task) {
-        String SQL_INSERT = "INSERT INTO tasks (title, dueDate, description, completed, priority, archived) VALUES (?, ?, ?, ?, ?, ?)";
+        String SQL_INSERT = "INSERT INTO tasks (title, dueDate, description, completed, priority, archived, completedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL_INSERT)) {
             createStatement(task, pstmt);
@@ -72,6 +73,7 @@ public class DatabaseHelper {
         pstmt.setBoolean(4, task.isCompleted());
         pstmt.setString(5, task.getPriority().toString());
         pstmt.setBoolean(6, task.isArchived());
+        pstmt.setDate(7, task.getCompletedAt() != null ? Date.valueOf(task.getCompletedAt()) : null);
     }
 
     /**
@@ -92,7 +94,8 @@ public class DatabaseHelper {
                         rs.getBoolean("completed"),
                         rs.getInt("id"),
                         rs.getString("priority"),
-                        rs.getBoolean("archived")
+                        rs.getBoolean("archived"),
+                        rs.getDate("completedAt") != null ? rs.getDate("completedAt").toLocalDate() : null
                 );// Ensure your Task constructor handles this
                 taskList.add(task);
             }
@@ -107,11 +110,11 @@ public class DatabaseHelper {
      * @param task Pass the task object into the function
      */
     public static void updateTask(Task task) {
-        String SQL_UPDATE = "UPDATE tasks SET title=?, dueDate=?, description=?, completed=?, priority=?, archived=? WHERE id=?";
+        String SQL_UPDATE = "UPDATE tasks SET title=?, dueDate=?, description=?, completed=?, priority=?, archived=?, completedAt=? WHERE id=?";
         try (Connection conn = getConnection();
             PreparedStatement pstmt = conn.prepareStatement(SQL_UPDATE)) {
             createStatement(task, pstmt);
-            pstmt.setInt(7, task.getId());
+            pstmt.setInt(8, task.getId());
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("Task updated successfully");

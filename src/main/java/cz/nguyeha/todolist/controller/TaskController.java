@@ -216,6 +216,11 @@ public class TaskController {
                 Task task = getItem();
                 if (task != null) {
                     task.setCompleted(!task.isCompleted());
+                    if (task.isCompleted()) {
+                        task.setCompletedAt(LocalDate.now());
+                    } else {
+                        task.setCompletedAt(null);
+                    }
                     taskManager.updateTask(task);
                     refreshTaskList();
                 }
@@ -266,7 +271,6 @@ public class TaskController {
                 dateLabel.setText(item.getDueDate().toString());
                 priorityLabel.setText(item.getPriority().toString());
                 completeButton.setText(item.isCompleted() ? "Completed" : "Mark Complete");
-
                 String priorityStyle = getPriorityStyle(item.getPriority());
                 priorityLabel.setStyle(priorityStyle);
 

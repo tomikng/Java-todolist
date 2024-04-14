@@ -21,14 +21,26 @@
 
             <VBox spacing="10">
                 <Label text="Tasks by Due Date" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-                <BarChart fx:id="dueDateBarChart">
+                <LineChart fx:id="dueDateLineChart">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" fx:id="xAxis" />
                     </xAxis>
                     <yAxis>
                         <NumberAxis side="LEFT" fx:id="yAxis" />
                     </yAxis>
-                </BarChart>
+                </LineChart>
+            </VBox>
+
+            <VBox spacing="10">
+                <Label text="Completed Tasks by Date" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                <LineChart fx:id="completedTasksLineChart">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" fx:id="completedXAxis" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" fx:id="completedYAxis" />
+                    </yAxis>
+                </LineChart>
             </VBox>
         </VBox>
     </ScrollPane>
