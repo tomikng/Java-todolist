@@ -3,30 +3,39 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.nguyeha.todolist.controller.TaskController" prefHeight="500.0" prefWidth="640.0">
-    <VBox spacing="20" layoutX="20" layoutY="20" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
-        <VBox spacing="10">
-            <Label text="Tasks" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <HBox spacing="10">
-                <ComboBox fx:id="filterComboBox" prefWidth="150" promptText="Filter"/>
-                <ComboBox fx:id="sortComboBox" prefWidth="150" promptText="Sort"/>
-                <ToggleButton fx:id="ascendingSwitch" layoutX="334.0" layoutY="290.0" text="Descending" onAction="#ascendingSwitch"/>
-                <CheckBox fx:id="showArchivedCheckBox" text="Show Archived"/>
-                <Region HBox.hgrow="ALWAYS"/>
-            </HBox>
-            <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" prefWidth="100" maxWidth="Infinity"/>
-        </VBox>
-        <Separator/>
-        <VBox spacing="10">
-            <Label text="Add New Task" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <HBox spacing="15" alignment="CENTER">
-                <TextField fx:id="titleTextField" HBox.hgrow="ALWAYS" prefWidth="100" promptText="Title"/>
-                <DatePicker fx:id="datePicker" prefWidth="150" promptText="Due Date"/>
-            </HBox>
-            <TextField fx:id="descriptionTextField" prefWidth="100" promptText="Description"/>
-            <HBox spacing="15" alignment="CENTER_RIGHT">
-                <ComboBox fx:id="priorityComboBox" prefWidth="150" promptText="Priority"/>
-                <Button fx:id="addTask" text="Add Task" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" prefWidth="100" onAction="#addTask"/>
-            </HBox>
-        </VBox>
-    </VBox>
+    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+<!--        TODO: Add padding-->
+        <Tab text="Tasks">
+            <VBox spacing="20" layoutX="20" layoutY="20" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
+                <VBox spacing="10">
+                    <Label text="Tasks" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <HBox spacing="10">
+                        <ComboBox fx:id="filterComboBox" prefWidth="150" promptText="Filter"/>
+                        <ComboBox fx:id="sortComboBox" prefWidth="150" promptText="Sort"/>
+                        <ToggleButton fx:id="ascendingSwitch" layoutX="334.0" layoutY="290.0" text="Descending" onAction="#ascendingSwitch"/>
+                        <CheckBox fx:id="showArchivedCheckBox" text="Show Archived"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" prefWidth="100" maxWidth="Infinity"/>
+                </VBox>
+                <Separator/>
+                <VBox spacing="10">
+                    <Label text="Add New Task" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <HBox spacing="15" alignment="CENTER">
+                        <TextField fx:id="titleTextField" HBox.hgrow="ALWAYS" prefWidth="100" promptText="Title"/>
+                        <DatePicker fx:id="datePicker" prefWidth="150" promptText="Due Date"/>
+                    </HBox>
+                    <TextField fx:id="descriptionTextField" prefWidth="100" promptText="Description"/>
+                    <HBox spacing="15" alignment="CENTER_RIGHT">
+                        <ComboBox fx:id="priorityComboBox" prefWidth="150" promptText="Priority"/>
+                        <Button fx:id="addTask" text="Add Task" style="-fx-background-color: #5cb85c; -fx-text-fill: white;" prefWidth="100" onAction="#addTask"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </Tab>
+        <Tab text="Graph">
+            <fx:include source="graph-view.fxml" />
+        </Tab>
+    </TabPane>
 </AnchorPane>
+

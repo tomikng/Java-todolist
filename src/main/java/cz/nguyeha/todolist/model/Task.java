@@ -14,6 +14,7 @@ public class Task {
 
     private Priority priority;
     private boolean archived;
+    private LocalDate completedAt;
 
     /**
      * The Task function is a constructor that creates a new Task object.
@@ -30,6 +31,7 @@ public class Task {
         this.completed = false;
         this.priority = priority;
         this.archived = false;
+        this.completedAt = null;
     }
 
     /**
@@ -42,11 +44,12 @@ public class Task {
      * @param id Set the id of the task
      * @param priority Set the priority of a task
      */
-    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, Priority priority, boolean archived) {
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, Priority priority, boolean archived, LocalDate completedAt) {
         this(title, dueDate, description, priority);
         this.completed = completed;
         this.id = id;
         this.archived = archived;
+        this.completedAt = completedAt;
     }
 
     /**
@@ -58,8 +61,8 @@ public class Task {
      * @param id Set the id of the task
      * @param priority Set the priority of a task
      */
-    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, String priority, boolean archived) {
-        this(title, dueDate, description, completed, id, Priority.valueOf(priority), archived);
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, String priority, boolean archived, LocalDate completedAt) {
+        this(title, dueDate, description, completed, id, Priority.valueOf(priority), archived, completedAt);
     }
 
     // Getters and setters
@@ -91,6 +94,13 @@ public class Task {
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+    public LocalDate getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDate completedAt) {
+        this.completedAt = completedAt;
     }
 
     /**
