@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.nguyeha.todolist.controller.GraphController">
+    <ScrollPane fitToWidth="true" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <Label text="Task Analytics" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Time Period:" style="-fx-font-size: 14px;" />
+                <ComboBox fx:id="timePeriodComboBox" prefWidth="150" />
+                <Button text="Refresh" onAction="#refreshGraphs" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 6px 12px;" />
+            </HBox>
+
+            <VBox spacing="10">
+                <Label text="Completed Tasks by Priority" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                <PieChart fx:id="completedTasksChart" />
+            </VBox>
+
+            <VBox spacing="10">
+                <Label text="Tasks by Due Date" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                <BarChart fx:id="dueDateBarChart">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" fx:id="xAxis" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" fx:id="yAxis" />
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</AnchorPane>

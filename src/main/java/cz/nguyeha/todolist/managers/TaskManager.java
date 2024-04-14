@@ -86,4 +86,8 @@ public class TaskManager {
 
         return filteredTasks;
     }
+
+    public List<Task> getCompletedTasks() {
+        return getAllTasks().stream().filter(Task::isCompleted).collect(Collectors.toList());
+    }
 }
