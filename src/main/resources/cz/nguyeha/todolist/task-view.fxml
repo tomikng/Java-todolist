@@ -10,7 +10,8 @@
                 <ComboBox fx:id="filterComboBox" prefWidth="150" promptText="Filter"/>
                 <ComboBox fx:id="sortComboBox" prefWidth="150" promptText="Sort"/>
                 <ToggleButton fx:id="ascendingSwitch" layoutX="334.0" layoutY="290.0" text="Descending" onAction="#ascendingSwitch"/>
-                <Region HBox.hgrow="ALWAYS"/> <!-- Ensures the list view stretches to fill space -->
+                <CheckBox fx:id="showArchivedCheckBox" text="Show Archived"/>
+                <Region HBox.hgrow="ALWAYS"/>
             </HBox>
             <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" prefWidth="100" maxWidth="Infinity"/>
         </VBox>

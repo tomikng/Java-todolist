@@ -42,6 +42,9 @@ public class TaskController {
     @FXML
     private ToggleButton ascendingSwitch;
 
+    @FXML
+    private CheckBox showArchivedCheckBox;
+
     private Boolean isAscending = false;
 
     private TaskManager taskManager;
@@ -67,6 +70,8 @@ public class TaskController {
         sortComboBox.setValue("Priority");
         sortComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
 
+        showArchivedCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> refreshTaskList());
+
         refreshTaskList();
     }
 
@@ -78,7 +83,8 @@ public class TaskController {
     private void refreshTaskList() {
         String filterValue = filterComboBox.getValue();
         String sortValue = sortComboBox.getValue();
-        taskListView.getItems().setAll(taskManager.getFilteredAndSortedTasks(filterValue, sortValue, isAscending));
+        boolean showArchived = showArchivedCheckBox.isSelected();
+        taskListView.getItems().setAll(taskManager.getFilteredAndSortedTasks(filterValue, sortValue, isAscending, showArchived));
     }
 
     /**
@@ -182,6 +188,8 @@ public class TaskController {
         private final Button completeButton = new Button();
         private final Button deleteButton = new Button("Delete");
         private final Region spacer = new Region();
+        private final Button archiveButton = new Button("Archive");
+        private final Button unArchiveButton = new Button("Unarchive");
 
         /**
          * The TaskListCell is a subclass of ListCell that allows for the creation of a cell in the task list.
@@ -218,6 +226,24 @@ public class TaskController {
                     showDetails(getItem());
                 }
             });
+
+            archiveButton.setOnAction(event -> {
+                Task task = getItem();
+                if (task != null) {
+                    task.setArchived(true);
+                    taskManager.updateTask(task);
+                    refreshTaskList();
+                }
+            });
+
+            unArchiveButton.setOnAction(event -> {
+                Task task = getItem();
+                if (task != null) {
+                    task.setArchived(false);
+                    taskManager.updateTask(task);
+                    refreshTaskList();
+                }
+            });
         }
 
         /**
@@ -241,11 +267,15 @@ public class TaskController {
                 priorityLabel.setText(item.getPriority().toString());
                 completeButton.setText(item.isCompleted() ? "Completed" : "Mark Complete");
 
-                // Style priority as a tag
                 String priorityStyle = getPriorityStyle(item.getPriority());
                 priorityLabel.setStyle(priorityStyle);
 
-                hbox.getChildren().setAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, deleteButton);
+                if (item.isArchived()) {
+                    hbox.getChildren().setAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, unArchiveButton, deleteButton);
+                } else {
+                    hbox.getChildren().setAll(nameLabel, dateLabel, priorityLabel, spacer, completeButton, archiveButton, deleteButton);
+                }
+
                 setGraphic(hbox);
             }
         }
@@ -265,7 +295,6 @@ public class TaskController {
                 case LOW -> "-fx-background-color: green; -fx-text-fill: white; -fx-padding: 3px;";
             };
         }
-
 
     }
 

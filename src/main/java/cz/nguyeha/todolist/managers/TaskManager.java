@@ -3,6 +3,7 @@ package cz.nguyeha.todolist.managers;
 import cz.nguyeha.todolist.database.DatabaseHelper;
 import cz.nguyeha.todolist.model.Task;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,32 +55,35 @@ public class TaskManager {
      * @return A list of tasks
      *
      */
-    public List<Task> getFilteredAndSortedTasks(String filterValue, String sortValue, boolean isAscending) {
-        List<Task> tasks = getAllTasks();
+    public List<Task> getFilteredAndSortedTasks(String filterValue, String sortValue, boolean isAscending, boolean showArchived) {
+        List<Task> filteredTasks = getAllTasks();
 
-        // Filter
-        if (!"All".equals(filterValue)) {
-            boolean isCompleted = "Completed".equals(filterValue);
-            tasks = tasks.stream()
-                    .filter(task -> task.isCompleted() == isCompleted)
-                    .collect(Collectors.toList());
+        // Filter tasks based on completion status and archived status
+        if (filterValue.equals("Completed")) {
+            filteredTasks = filteredTasks.stream().filter(Task::isCompleted).collect(Collectors.toList());
+        } else if (filterValue.equals("Not Completed")) {
+            filteredTasks = filteredTasks.stream().filter(task -> !task.isCompleted()).collect(Collectors.toList());
         }
 
-        // Sort
-        Comparator<Task> comparator = null;
-        if ("Priority".equals(sortValue)) {
-            comparator = Comparator.comparing(Task::getPriority);
-        } else if ("Date".equals(sortValue)) {
-            comparator = Comparator.comparing(Task::getDueDate);
+        // Filter archived tasks based on showArchived parameter
+        if (!showArchived) {
+            filteredTasks = filteredTasks.stream().filter(task -> !task.isArchived()).collect(Collectors.toList());
+        } else {
+            filteredTasks = filteredTasks.stream().filter(Task::isArchived).collect(Collectors.toList());
         }
 
-        if (comparator != null) {
-            if (!isAscending) {
-                comparator = comparator.reversed();
-            }
-            tasks = tasks.stream().sorted(comparator).collect(Collectors.toList());
+        // Sort tasks based on the selected criteria
+        if (sortValue.equals("Priority")) {
+            filteredTasks.sort(Comparator.comparing(Task::getPriority));
+        } else if (sortValue.equals("Date")) {
+            filteredTasks.sort(Comparator.comparing(Task::getDueDate));
         }
 
-        return tasks;
+        // Reverse the order if descending is selected
+        if (!isAscending) {
+            Collections.reverse(filteredTasks);
+        }
+
+        return filteredTasks;
     }
 }

@@ -13,6 +13,7 @@ public class Task {
     private boolean completed;
 
     private Priority priority;
+    private boolean archived;
 
     /**
      * The Task function is a constructor that creates a new Task object.
@@ -28,6 +29,7 @@ public class Task {
         this.description = description;
         this.completed = false;
         this.priority = priority;
+        this.archived = false;
     }
 
     /**
@@ -40,10 +42,11 @@ public class Task {
      * @param id Set the id of the task
      * @param priority Set the priority of a task
      */
-    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, Priority priority) {
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, Priority priority, boolean archived) {
         this(title, dueDate, description, priority);
         this.completed = completed;
         this.id = id;
+        this.archived = archived;
     }
 
     /**
@@ -55,8 +58,8 @@ public class Task {
      * @param id Set the id of the task
      * @param priority Set the priority of a task
      */
-    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, String priority) {
-        this(title, dueDate, description, completed, id, Priority.valueOf(priority));
+    public Task(String title, LocalDate dueDate, String description, boolean completed, int id, String priority, boolean archived) {
+        this(title, dueDate, description, completed, id, Priority.valueOf(priority), archived);
     }
 
     // Getters and setters
@@ -80,6 +83,14 @@ public class Task {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     /**
